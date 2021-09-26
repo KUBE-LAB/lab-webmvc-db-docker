@@ -1,0 +1,39 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: lab-webmvc-db-docker
+spec:
+  type: NodePort
+  selector:
+    app: lab-webmvc-db-docker
+  ports:
+  - protocol: TCP
+    port: 8888
+    nodePort: 30400
+    targetPort: 8888
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lab-webmvc-db-docker 
+  labels:
+    app: lab-webmvc-db-docker
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: lab-webmvc-db-docker
+  template:
+    metadata:
+      labels:
+        app: lab-webmvc-db-docker
+        version: "0.0.1"
+        role: rolling-update
+    spec:
+      containers:
+      - name: lab-webmvc-db-docker
+        image: twinspark81/lab-webmvc-db-docker:0.0.1
+        ports:
+        - name: http
+          containerPort: 8888
